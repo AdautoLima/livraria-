@@ -1,0 +1,5 @@
+<beans>
+	<interceptors>
+		<class>br.com.prova.livraria.tx.GerenciadorDeTransacoes</class>
+	</interceptors>
+</beans>

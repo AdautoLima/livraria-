@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+ 	  xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+ 	  xmlns:p="http://primefaces.org/ui" >
+
+	<ui:composition template="_template.xhtml">
+    	
+    	<f:metadata>
+	    	<f:viewParam name="autorId" value="#{autorBean.autorId}"/>
+    		<f:viewAction action="#{autorBean.carregarAutorPeloId}" if="#{param.autorId != null}" />
+    	</f:metadata>
+    	
+    	<ui:define name="titulo">
+    		<p:outputPanel>Novo Autor</p:outputPanel>
+    	</ui:define>
+    	
+    	<ui:define name="conteudo">
+			<h:form id="autor">
+				<p:fieldset legend="Dados do Autor">
+					
+					<h:panelGrid>
+						<p:outputLabel value="Nome:" for="nome" />
+						<p:inputText id="nome" value="#{autorBean.autor.nome}" required="true" >
+							<f:validateLength minimum="5" />
+							<f:ajax event="blur" render="messageNome" />
+						</p:inputText>
+						
+						<p:message for="nome" id="messageNome" />
+						
+						<p:outputLabel value="E-mail:" for="email" />
+						<p:inputText id="email" value="#{autorBean.autor.email}" required="true" 
+																			validatorMessage="E-mail inválido!" >
+							<f:attribute name="type" value="email" />
+							<f:passThroughAttribute name="placeholder" value="E-mail do Autor" />
+							<f:validateRegex pattern="^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})$" />
+							<f:ajax event="blur" render="messageEmail" />
+						</p:inputText>
+						
+						<p:message for="email" id="messageEmail"/>
+						
+						<p:commandButton value="Gravar" action="#{autorBean.gravar}" process="@form" 
+												update="@form :formTabelaAutores" />
+					</h:panelGrid>
+				</p:fieldset>
+			</h:form>
+			
+			<h:form id="formTabelaAutores">
+				<p:dataTable value="#{autorBean.autores}" var="autor" id="tabelaAutores" paginator="true" 
+							 rows="5" widgetVar="tabelaAutores" >
+					<f:facet name="header">Autores</f:facet>
+					<p:column headerText="Nome" sortBy="#{autor.nome}" filterBy="#{autor.nome}" >						
+						<h:outputText value="#{autor.nome}" />
+					</p:column>
+					<p:column headerText="E-mail" sortBy="#{autor.email}" filterBy="#{autor.email}" >
+						<h:outputText value="#{autor.email}" />
+					</p:column>
+									
+					<p:column headerText="Operações" style="text-align:center">
+	        			 
+	        			<p:commandButton id="alterar" icon="fa fa-fw fa-edit" actionListener="#{autorBean.carregar(autor)}" update="autor"/>
+	        			<p:tooltip id="toolTipAlterar" for="alterar" value="Alteração"
+               					   showEffect="clip" hideEffect="explode" position="left"/>
+	        			&nbsp; &nbsp;	        			      			
+	        			<p:commandButton id="excluir" icon="fa fa-fw fa-trash" actionListener="#{autorBean.remover(autor)}" 
+	        							 update=":messages :formTabelaAutores:tabelaAutores" >
+	        				<p:confirm header="Confirmação" message="Confirma exclusão?" icon="fa fa-fw fa-exclamation-triangle" />	 
+	        			</p:commandButton>
+	        			<p:tooltip id="toolTipExcluir" for="excluir" value="Exclusão"
+               					   showEffect="clip" hideEffect="explode" position="left"/>
+	    			</p:column>
+	    		</p:dataTable>	
+
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+        			<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-fw fa-check" />
+        			<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-fw fa-close" />
+    			</p:confirmDialog>
+										
+			</h:form>			
+		</ui:define>
+	</ui:composition>
+</html>
